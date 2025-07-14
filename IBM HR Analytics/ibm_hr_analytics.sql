@@ -7,13 +7,13 @@ SELECT Attrition
     BY Attrition;
     
 -- Description of Age
-SELECT AVG(AGE)
-     , MIN(AGE)
-     , MAX(AGE)
+SELECT AVG(AGE) # 36.9238
+     , MIN(AGE) # 18
+     , MAX(AGE) # 60
   FROM employee;
     
 -- Attrition Rate by Age group
--- : Attrition Rate is the highest in 30s, lowest in over 50s
+-- : Attrition Rate is the highest in 30s (35.86%), lowest in over 50s(7.59%)
 SELECT
   CASE
 	   WHEN Age < 25 THEN 'Under 25'
@@ -29,4 +29,68 @@ SELECT
     BY Age_group
  ORDER
     BY att_rate DESC;
+
+-- Description of Gender
+-- : Male > Female
+SELECT Gender
+     , COUNT(Gender) AS cnt
+  FROM employee
+ GROUP
+    BY gender;
+    
+-- Attrition Rate by Gender
+-- : Attrition Rate of Male is almost 1.7 times higher than Female
+SELECT Gender
+     , ROUND(COUNT(*) * 100 / SUM(COUNT(*)) OVER (), 2) AS att_rate
+  FROM employee
+ WHERE Attrition = 'Yes'
+ GROUP
+    BY Gender
+ ORDER
+    BY att_rate DESC;
+  
+-- Attrition Rate by Gender and MaritalStatus
+-- : Single Male has the highest Attrition Rate
+-- : Single > Married > Divorced
+SELECT Gender
+     , MaritalStatus
+     , ROUND(COUNT(*) * 100 / SUM(COUNT(*)) OVER (), 2) AS att_rate
+  FROM employee
+ WHERE Attrition = 'YES'
+ GROUP
+    BY Gender, MaritalStatus;
+
+-- Description of DailyRate    
+SELECT AVG(DailyRate)
+     , MIN(DailyRate)
+     , MAX(DailyRate)
+  FROM employee;
+
+-- Attrition Rate by DailyRate
+-- : Attrition Ratet is the highest in '300 to 600', lowest in 'Under 300'
+SELECT
+  CASE
+	   WHEN DailyRate < 300 THEN 'Under 300'
+       WHEN DailyRate BETWEEN 300 AND 600 THEN '300 TO 600'
+       WHEN DailyRate BETWEEN 600 AND 900 THEN '600 TO 900'
+       WHEN DailyRate BETWEEN 900 AND 1200 THEN '900 TO 1200'
+       ELSE 'Over 1200'
+   END AS DailyRate_group
+     , ROUND(COUNT(*) * 100 / SUM(COUNT(*)) OVER (), 2) AS att_rate
+  FROM employee
+ WHERE Attrition = 'Yes'
+ GROUP
+    BY DailyRate_group
+ ORDER
+    BY att_rate DESC;
+
+-- Average DailyRate by Education 
+-- DailyRate is the highest in 'Below College' level, lowest in 'Bachelor' level   
+SELECT Education
+     , AVG(DailyRate) AS avg_DR
+  FROM employee
+ GROUP
+    BY Education
+ ORDER
+    BY avg_DR DESC;
     
