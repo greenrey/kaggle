@@ -93,4 +93,30 @@ SELECT Education
     BY Education
  ORDER
     BY avg_DR DESC;
-    
+
+-- Daily Working Hours 
+SELECT AVG(DailyWorkingHours)
+     , MIN(DailyWorkingHours)
+     , MAX(DailyWorkingHours)
+  FROM (SELECT DailyRate / HourlyRate AS DailyWorkingHours
+          FROM employee) AS A;  
+          
+-- Attrition Rate by Daily working hours
+SELECT
+  CASE
+	   WHEN DailyWorkingHours < 4 THEN 'Under 4'
+       WHEN DailyWorkingHours BETWEEN 4 AND 8 THEN '4 TO 8'
+       WHEN DailyWorkingHours BETWEEN 8 AND 12 THEN '8 TO 12'
+       WHEN DailyWorkingHours BETWEEN 12 AND 16 THEN '12 TO 16'
+       WHEN DailyWorkingHours BETWEEN 16 AND 20 THEN '16 TO 20'
+       ELSE 'Over 20'
+   END AS DailyWorkingHours_group
+     , ROUND(COUNT(*) * 100 / SUM(COUNT(*)) OVER (), 2) AS att_rate
+  FROM (SELECT DailyRate / HourlyRate AS DailyWorkingHours
+		     , Attrition
+          FROM employee) AS A
+ WHERE Attrition = 'Yes'
+ GROUP
+    BY DailyWorkingHours_group
+ ORDER
+    BY att_rate DESC;
