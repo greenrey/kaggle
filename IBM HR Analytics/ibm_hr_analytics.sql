@@ -120,3 +120,16 @@ SELECT
     BY DailyWorkingHours_group
  ORDER
     BY att_rate DESC;
+    
+-- JobSatisfaction and Attrition Rate by JobRole
+-- Employees with Human Resources job have the lowest Job Satisfaction but the lowest attrition rate
+-- Employees with Sales Execuctive job have third highest Job Satisfaction but the highest attrition rate
+-- Research Scientists have the second highest Job Satisfaction and the second highest attrition rate
+SELECT JobRole
+	 , AVG(JobSatisfaction)
+     , ROUND(COUNT(*) * 100 / SUM(COUNT(*)) OVER (), 2) AS att_rate
+  FROM employee
+ GROUP
+    BY JobRole
+ ORDER
+    BY AVG(JobSatisfaction);
